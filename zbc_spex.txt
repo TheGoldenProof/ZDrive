@@ -1,0 +1,84 @@
+all blocks are 32 bits / 4 bytes.
+u : unsigned (int)
+i : (signed) int
+f : float
+b : bool (technically just an unsigned int)
+
+
+
+file header:
+
+routine count : u
+main routine id : u
+routine id #0 type : u
+routine id #0 size : u
+routine id #0 pos : u
+...
+routine id #n type : u
+routine id #n size : u
+routine id #n pos : u
+
+
+
+file body:
+
+{routine}
+...
+{routine}
+
+routine:
+{instruction}
+...
+{instruction}
+
+instruction:
+timecode : i
+diff mask : u
+rank mask : u
+instruction : u
+arg count : u
+{arg}
+...
+{arg}
+
+A note on arg count:
+This value simply tells how many value pairs until the next instruction.
+It does not affect how many args the instruction will read or throw errors if it is incorrect.
+for example, writing a jump instruction followed by 6 arguments with an arg count of 6 will function exactly the same as if the proper number was specified and given.
+That is because jmp simply will not read more arguments than it needs, and then the instruction pointer will jump to the next isntruction based on argcount.
+On the otherhand, calling jmp with 0 args and 0 arg count will likely cause an error, because it will try to read the timecode of the next instruction as the arg type, which wont work if its not a valid arg type.
+
+arg:
+arg type : u (0: constant; 1: variable id;)
+value : ? (can be any type, dependent on function)
+
+
+
+VarTable
+
+The variable table holds 32-bit variables. Variables are dynamically typed. 
+That means a value can be set with fset and then passed to an instruction that takes an int. 
+The integer interpretation of the IEEE-754 representation of the float will be passed, 
+which is probably not what you want. Variables come with recommended types,
+and in the case of global variables, types that they will be read as.
+For this reason, setting a int global variable to a float will cause undefined behavior, and vice versa.
+Similarly, reading an int global variable as a float will likely not give the expected number, and vice versa.
+There are instructions that convert between floats and ints.
+
+
+
+RoutineBase instruction table
+
+Types:
+Since ZCode is dynamically typed, parameter bits will be interpreted as the tagged type:
+uint : unsigned integer
+sint : signed integer
+int : integer, signed or unsigned. The operation likely performs a bitwise operation that only makes sense for integral types, such as bitwise arithmetic
+float : IEEE-754 single precision floating point
+any : the operation likely performs a copy or == bitwise operation, such as 'set'
+vtu : vartable id, where the value stored will be treated as uint
+vts : vartable id, where the value stored will be treated as sint
+vti : vartable id, where the value stored will be treated as int
+vtf : vartable id, where the value stored will be treated as float
+vta : vartable id, where the value stored will be treated as any
+
