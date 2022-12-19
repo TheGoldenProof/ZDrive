@@ -549,7 +549,7 @@ namespace ZDrive::Compiler {
 				{AT::CNST, 0},
 				{AT::VTREF, VTID::CLOCK}
 			}};
-		sub.writeIns(jmpToElseIns);
+		sub.writeIns(jmpToAfterIns);
 		u32 jmpToAfterPosPos = sub.code.size() - 3;
 
 		sub.code[jmpToElsePosPos] = sub.code.size();
@@ -632,7 +632,7 @@ namespace ZDrive::Compiler {
 		u32 conditionPos = sub.code.size();
 
 		Ins jmpToAfterIns{
-			{time, -1, -1, op, 4},
+			{time, -1, -1, op, 5},
 			{
 				{AT::CNST, 0},
 				{AT::VTREF, VTID::CLOCK},

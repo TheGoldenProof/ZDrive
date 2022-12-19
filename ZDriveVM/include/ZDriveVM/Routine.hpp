@@ -87,21 +87,21 @@ namespace ZDrive::VM {
 
 		virtual HandleResult Handle(ProcessedInstruction const&) override;
 	protected:
-		std::function<Value(Value, Value)> func_iadd = [](Value a, Value b) { return a.s + b.s; };
-		std::function<Value(Value, Value)> func_isub = [](Value a, Value b) { return a.s - b.s; };
-		std::function<Value(Value, Value)> func_imul = [](Value a, Value b) { return a.s * b.s; };
-		std::function<Value(Value, Value)> func_idiv = [](Value a, Value b) { return a.s / b.s; };
-		std::function<Value(Value, Value)> func_imod = [](Value a, Value b) { return a.s % b.s; };
-		std::function<Value(Value, Value)> func_imod2 = [](Value a, Value b) { return b.s % a.s; };
-		std::function<Value(Value, Value)> func_fadd = [](Value a, Value b) { return a.f + b.f; };
-		std::function<Value(Value, Value)> func_fsub = [](Value a, Value b) { return a.f - b.f; };
-		std::function<Value(Value, Value)> func_fmul = [](Value a, Value b) { return a.f * b.f; };
-		std::function<Value(Value, Value)> func_fdiv = [](Value a, Value b) { return a.f / b.f; };
-		std::function<Value(Value, Value)> func_fmod = [](Value a, Value b) { return fmodf(a, b); };
-		std::function<Value(Value, Value)> func_fmod2 = [](Value a, Value b) { return fmodf(b, a); };
-		std::function<Value(Value)> func_sin = [](Value a) { return sinf(a); };
-		std::function<Value(Value)> func_cos = [](Value a) { return cosf(a); };
-		std::function<Value(Value)> func_tan = [](Value a) { return tanf(a); };
+		static const std::function<Value(Value, Value)> func_iadd;
+		static const std::function<Value(Value, Value)> func_isub;
+		static const std::function<Value(Value, Value)> func_imul;
+		static const std::function<Value(Value, Value)> func_idiv;
+		static const std::function<Value(Value, Value)> func_imod;
+		static const std::function<Value(Value, Value)> func_imod2;
+		static const std::function<Value(Value, Value)> func_fadd;
+		static const std::function<Value(Value, Value)> func_fsub;
+		static const std::function<Value(Value, Value)> func_fmul;
+		static const std::function<Value(Value, Value)> func_fdiv;
+		static const std::function<Value(Value, Value)> func_fmod;
+		static const std::function<Value(Value, Value)> func_fmod2;
+		static const std::function<Value(Value)> func_sin;
+		static const std::function<Value(Value)> func_cos;
+		static const std::function<Value(Value)> func_tan;
 
 		void OP_jmp(u32 pos, i32 t);
 	};

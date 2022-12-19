@@ -111,6 +111,7 @@ namespace ZDrive {
 			YEILD,
 			PRINT,
 			SET_PTR,
+			ASSERT_PTR,
 			SET_PRIORITY,
 
 			BASE_FIRST = NOP,
@@ -121,7 +122,7 @@ namespace ZDrive {
 
 	namespace DefaultSubID {
 		enum DEF_SUB {
-			INTERP_LIN = 0,
+			INTERP_LINEAR = 0,
 			INTERP_QUAD_IN, INTERP_CUBE_IN, INTERP_QUART_IN,
 			INTERP_QUAD_OUT, INTERP_CUBE_OUT, INTERP_QUART_OUT,
 			INTERP_CONST_VEL, INTERP_BEZIER,
@@ -138,7 +139,7 @@ namespace ZDrive {
 
 	namespace InterpMode {
 		enum INTERP {
-			LIN = 0,
+			LINEAR = 0,
 			QUAD_IN, CUBE_IN, QUART_IN,
 			QUAD_OUT, CUBE_OUT, QUART_OUT,
 			CONST_VEL, BEZIER,

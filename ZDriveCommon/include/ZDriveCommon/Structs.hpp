@@ -34,6 +34,7 @@ namespace ZDrive {
 		inline constexpr operator i32() const { return s; }
 		inline constexpr operator u32() const { return u; }
 		inline constexpr operator f32() const { return f; }
+		inline operator ValPtr() const { return ValPtr(u); }
 		inline constexpr bool operator==(Value const& other) const { return u == other.u; }
 		inline constexpr bool operator!=(Value const& other) const { return u != other.u; }
 	};

@@ -17,7 +17,7 @@ namespace ZDrive::VM {
 			
 			switch (typeId) {
 			default:
-				Logger::Log(Logger::LL::Error) << "Error creating routine template for routine id " << i << ": type " << typeId << " not recognized." << std::endl;
+				Logger::Log(Logger::LL::Error) << "Error creating routine template for routine id " << i << ": type " << typeId << " not recognized.";
 				results.push_back(1);
 				[[fallthrough]];
 			case RT::BASE: rt_ptr = new RoutineBase(*this, std::span(code.begin() + start, size), i, 0); break;
@@ -25,7 +25,7 @@ namespace ZDrive::VM {
 
 			rt_ptr->Update();
 			if (rt_ptr->deleteMe) {
-				Logger::Log(Logger::LL::Error) << "Template for routine id " << i << " marked for deletion after construction. It will not be constructable." << std::endl;
+				Logger::Log(Logger::LL::Error) << "Template for routine id " << i << " marked for deletion after construction. It will not be constructable.";
 				delete rt_ptr;
 			} else {
 				templates.emplace_back(rt_ptr);
@@ -33,12 +33,12 @@ namespace ZDrive::VM {
 		}
 
 		if (rt_count == 0) {
-			Logger::Log(Logger::LL::Warn) << "ZVM routine count is 0" << std::endl;
+			Logger::Log(Logger::LL::Warn) << "ZVM routine count is 0";
 			finished = true;
 			results.push_back(2);
 		} else {
 			if (mainId == static_cast<u32>(-1)) { // can i just say 0u-1?
-				Logger::Log(Logger::LL::Warn) << "Code does not have an entry routine set and will not run." << std::endl;
+				Logger::Log(Logger::LL::Warn) << "Code does not have an entry routine set and will not run.";
 				finished = true;
 				results.push_back(3);
 			} else {
@@ -55,12 +55,12 @@ namespace ZDrive::VM {
 
 		if (active.size() == 0) {
 			if (finished == true)
-				Logger::Log(Logger::LL::Warn) << "ZVM Updated, but there are no active routines in the VM." << std::endl;
+				Logger::Log(Logger::LL::Warn) << "ZVM Updated, but there are no active routines in the VM.";
 			finished = true;
 		}
 
 		if (finished) {
-			Logger::Log(Logger::LL::Info) << "The ZVM has finished running." << std::endl;
+			Logger::Log(Logger::LL::Info) << "The ZVM has finished running.";
 		}
 
 		for (auto&& iter = active.begin(); iter != active.end(); ) {
@@ -69,7 +69,7 @@ namespace ZDrive::VM {
 				iter = active.erase(iter);
 			} else {
 				if (!rt_ptr->Update()) {
-					Logger::Log(Logger::LL::Error) << "Error updating routine " << rt_ptr->toString() << std::endl;
+					Logger::Log(Logger::LL::Error) << "Error updating routine " << rt_ptr->toString();
 					ret = false;
 				}
 				iter++;
@@ -97,7 +97,7 @@ namespace ZDrive::VM {
 		std::optional<std::reference_wrapper<Routine>> rt_optref = GetRoutineByInstance(id.b, asker);
 
 		if (!rt_optref) {
-			Logger::Log(Logger::LL::Warn) << "Routine with instanceId " << id.b << " not found." << std::endl;
+			Logger::Log(Logger::LL::Warn) << "Routine with instanceId " << id.b << " not found.";
 			return 3;
 		}
 		return rt_optref.value().get().SetVar(id.v, value);
@@ -107,7 +107,7 @@ namespace ZDrive::VM {
 		std::optional<std::reference_wrapper<Routine>> rt_optref = GetRoutineByInstance(id.b, asker);
 
 		if (!rt_optref) {
-			Logger::Log(Logger::LL::Warn) << "Routine with instanceId " << id.b << " not found." << std::endl;
+			Logger::Log(Logger::LL::Warn) << "Routine with instanceId " << id.b << " not found.";
 			return std::nullopt;
 		}
 		return rt_optref.value().get().GetVar(id.v);
@@ -117,7 +117,7 @@ namespace ZDrive::VM {
 		std::optional<std::reference_wrapper<Routine>> rt_optref = GetRoutineByInstance(id.b, asker);
 
 		if (!rt_optref) {
-			Logger::Log(Logger::LL::Warn) << "Routine with instanceId " << id.b << " not found." << std::endl;
+			Logger::Log(Logger::LL::Warn) << "Routine with instanceId " << id.b << " not found.";
 			return std::nullopt;
 		}
 		return rt_optref.value().get().GetVarRef(id.v);
@@ -141,7 +141,7 @@ namespace ZDrive::VM {
 			active.insert(std::move(clone));
 			return ret;
 		} catch (std::out_of_range e) {
-			Logger::Log(Logger::LL::Error) << "Could not clone " << subId << ": not found." << std::endl;
+			Logger::Log(Logger::LL::Error) << "Could not clone " << subId << ": not found.";
 			return std::nullopt;
 		}
 	}
@@ -161,7 +161,7 @@ namespace ZDrive::VM {
 				return;
 			}
 		}
-		Logger::Log(Logger::LL::Error) << "Tried to update priority for non-existant instance: " << instanceId << std::endl;
+		Logger::Log(Logger::LL::Error) << "Tried to update priority for non-existant instance: " << instanceId;
 	}
 
 #ifdef _DEBUG
@@ -169,15 +169,15 @@ namespace ZDrive::VM {
 		u32 rt_count = code[0];
 		u32 mainId = code[1];
 
-		Logger::Log(Logger::LL::Debug) << "Routine Count: " << rt_count << std::endl;
-		Logger::Log(Logger::LL::Debug) << "Main Routine: " << mainId << std::endl;
+		Logger::Log(Logger::LL::Debug) << "Routine Count: " << rt_count;
+		Logger::Log(Logger::LL::Debug) << "Main Routine: " << mainId;
 
 		for (u32 i = 0; i < templates.size(); i++) {
 			u32 typeId = code[i * 3 + 2];
 			u32 size = code[i * 3 + 3];
 			u32 start = code[i * 3 + 4];
-			Logger::Log(Logger::LL::Debug) << "------ Routine " << i << " ------" << std::endl;
-			Logger::Log(Logger::LL::Debug) << "type: " << typeId << ", offset: " << start << ", size: " << size << std::endl;
+			Logger::Log(Logger::LL::Debug) << "------ Routine " << i << " ------";
+			Logger::Log(Logger::LL::Debug) << "type: " << typeId << ", offset: " << start << ", size: " << size;
 			templates[i]->DebugDisassemble();
 		}
 	}

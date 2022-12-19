@@ -131,6 +131,8 @@ namespace ZDrive::Compiler {
 		di(INS::YEILD, 0, "yeild");
 		di(INS::PRINT, 3, "print");
 		di(INS::SET_PTR, 2, "set_ptr");
+		di(INS::ASSERT_PTR, 2, "assert_ptr");
+		di(INS::SET_PRIORITY, 1, "set_priority");
 
 #undef di
 	}

@@ -44,14 +44,14 @@ namespace ZDrive::VM {
 		case AT::CNST: return arg.val;
 		case AT::VTREF: {
 			auto ret = GetVar(arg.val);
-			if (!ret) Logger::Log(Logger::LL::Error) << "Could not resolve argument " << arg.toString(AT::VTREF) << ": variable not found." << std::endl;
+			if (!ret) Logger::Log(Logger::LL::Error) << "Could not resolve argument " << arg.toString(AT::VTREF) << ": variable not found.";
 			return ret;
 		}
 		case AT::TEMP_LABEL:
-			Logger::Log(Logger::LL::Error) << "TEMP_LABEL ArgType in ResolveArg" << std::endl;
+			Logger::Log(Logger::LL::Error) << "TEMP_LABEL ArgType in ResolveArg";
 			return std::nullopt;
 		default:
-			Logger::Log(Logger::LL::Error) << "Unknown ArgType: " << arg.type << std::endl;
+			Logger::Log(Logger::LL::Error) << "Unknown ArgType: " << arg.type;
 			return std::nullopt;
 		}
 	}
@@ -66,8 +66,8 @@ namespace ZDrive::VM {
 			bool shouldReturn = false;
 			std::optional<PrxIns> prx_ins = ProcessInstruction(cur_ins);
 			if (!prx_ins) {
-				Logger::Log(Logger::LL::Error) << "Skipping instruction that failed to process: " << std::endl;
-				Logger::Log(Logger::LL::Error) << cur_ins.toString() << std::endl;
+				Logger::Log(Logger::LL::Error) << "Skipping instruction that failed to process: ";
+				Logger::Log(Logger::LL::Error) << cur_ins.toString();
 			} else {
 				i32 diff_mask = cur_ins.header.diff_mask;
 				i32 rank_mask = cur_ins.header.rank_mask;
@@ -81,10 +81,10 @@ namespace ZDrive::VM {
 					deleteMe = result.deleteMe;
 
 					if (!result.success) {
-						Logger::Log(Logger::LL::Error) << "Error while handling instruction: " << std::endl;
-						Logger::Log(Logger::LL::Error) << cur_ins.toString() << std::endl;
+						Logger::Log(Logger::LL::Error) << "Error while handling instruction: ";
+						Logger::Log(Logger::LL::Error) << cur_ins.toString();
 						if (result.deleteMe) {
-							Logger::Log(Logger::LL::Error) << "Routine {instance: " << instanceId << ", sub: " << subId << ", type: " << GetTypeID() << "} had a fatal error and will be terminated." << std::endl;
+							Logger::Log(Logger::LL::Error) << "Routine {instance: " << instanceId << ", sub: " << subId << ", type: " << GetTypeID() << "} had a fatal error and will be terminated.";
 						}
 					}
 				}
@@ -101,9 +101,9 @@ namespace ZDrive::VM {
 	i32 Routine::try_set(u32 id, Value const& value) {
 		i32 result = SetVar(id, value);
 		if (result == 1) {
-			Logger::Log(Logger::LL::Error) << "Could not find variable " << id << std::endl;
+			Logger::Log(Logger::LL::Error) << "Could not find variable " << id;
 		} else if (result == 2) {
-			Logger::Log(Logger::LL::Error) << "Variable " << id << " is read only." << std::endl;
+			Logger::Log(Logger::LL::Error) << "Variable " << id << " is read only.";
 		}
 		return result;
 	}
@@ -115,7 +115,7 @@ namespace ZDrive::VM {
 	i32 Routine::self_unary_op(u32 a_id, std::function<Value(Value)> func) {
 		std::optional<Value> derefId = GetVar(a_id);
 		if (!derefId) {
-			Logger::Log(Logger::LL::Error) << "Could not find variable " << a_id << std::endl;
+			Logger::Log(Logger::LL::Error) << "Could not find variable " << a_id;
 			return 1;
 		}
 		return unary_op(a_id, derefId.value(), func);
@@ -128,7 +128,7 @@ namespace ZDrive::VM {
 	i32 Routine::self_binary_op(u32 a_id, Value b, std::function<Value(Value, Value)> func) {
 		std::optional<Value> derefId = GetVar(a_id);
 		if (!derefId) {
-			Logger::Log(Logger::LL::Error) << "Could not find variable " << a_id << std::endl;
+			Logger::Log(Logger::LL::Error) << "Could not find variable " << a_id;
 			return 1;
 		}
 		return binary_op(a_id, derefId.value(), b, func);
@@ -136,7 +136,7 @@ namespace ZDrive::VM {
 
 #ifdef _DEBUG
 	void Routine::DebugDisassemble() const {
-		Logger::Log(Logger::LL::Debug) << "offset   time  diff rank   name             args" << std::endl;
+		Logger::Log(Logger::LL::Debug) << "offset   time  diff rank   name             args";
 		Ins ins;
 		for (u32 offset = 0; offset < code.size(); offset += static_cast<u32>(ins.size())) {
 			ins = Ins(code.begin() + offset);
@@ -211,6 +211,23 @@ namespace ZDrive::VM {
 		InitializeVars(defvars);
 	}
 
+	const std::function<Value(Value, Value)> RoutineBase::func_iadd = [](Value a, Value b) { return a.s + b.s; };
+	const std::function<Value(Value, Value)> RoutineBase::func_isub = [](Value a, Value b) { return a.s - b.s; };
+	const std::function<Value(Value, Value)> RoutineBase::func_imul = [](Value a, Value b) { return a.s * b.s; };
+	const std::function<Value(Value, Value)> RoutineBase::func_idiv = [](Value a, Value b) { return a.s / b.s; };
+	const std::function<Value(Value, Value)> RoutineBase::func_imod = [](Value a, Value b) { return a.s % b.s; };
+	const std::function<Value(Value, Value)> RoutineBase::func_imod2 = [](Value a, Value b) { return b.s % a.s; };
+	const std::function<Value(Value, Value)> RoutineBase::func_fadd = [](Value a, Value b) { return a.f + b.f; };
+	const std::function<Value(Value, Value)> RoutineBase::func_fsub = [](Value a, Value b) { return a.f - b.f; };
+	const std::function<Value(Value, Value)> RoutineBase::func_fmul = [](Value a, Value b) { return a.f * b.f; };
+	const std::function<Value(Value, Value)> RoutineBase::func_fdiv = [](Value a, Value b) { return a.f / b.f; };
+	const std::function<Value(Value, Value)> RoutineBase::func_fmod = [](Value a, Value b) { return fmodf(a, b); };
+	const std::function<Value(Value, Value)> RoutineBase::func_fmod2 = [](Value a, Value b) { return fmodf(b, a); };
+	const std::function<Value(Value)> RoutineBase::func_sin = [](Value a) { return sinf(a); };
+	const std::function<Value(Value)> RoutineBase::func_cos = [](Value a) { return cosf(a); };
+	const std::function<Value(Value)> RoutineBase::func_tan = [](Value a) { return tanf(a); };
+
+
 	std::optional<Value> RoutineBase::GetVar(u32 id) {
 		switch (id) {
 		case VTID::RAND: return GetVarRef(id).transform([](auto varRef) {return varRef.get() = ZDrive::rand(); });
@@ -243,7 +260,7 @@ namespace ZDrive::VM {
 				u32 iterId = args.at(2);
 				auto iterOpt = GetVar(iterId);
 				if (!iterOpt) {
-					Logger::Log(Logger::LL::Error) << "Could not find variable " << iterId << std::endl;
+					Logger::Log(Logger::LL::Error) << "Could not find variable " << iterId;
 					ret.success = false;
 					break;
 				}
@@ -253,7 +270,7 @@ namespace ZDrive::VM {
 					iter.u--;
 					i32 result = SetVar(iterId, iter);
 					if (result == 2) {
-						Logger::Log(Logger::LL::Error) << "Variable " << iterId << " is read only." << std::endl;
+						Logger::Log(Logger::LL::Error) << "Variable " << iterId << " is read only.";
 						ret.success = false;
 					}
 				}
@@ -311,7 +328,7 @@ namespace ZDrive::VM {
 				f32 f1 = args.at(5);
 				f32 f2 = args.at(6);
 
-				auto interp_optref = vm.CloneAndActivateTemplate(DEF_SUB::INTERP_LIN + m);
+				auto interp_optref = vm.CloneAndActivateTemplate(DEF_SUB::INTERP_LINEAR + m);
 				if (interp_optref) {
 					Routine& interp_rt = interp_optref.value();
 					// dumb hack because i think protected methods should be accessible through their objects within derived classes
@@ -324,7 +341,7 @@ namespace ZDrive::VM {
 					ret.success &= !(interp_rt.*(&RoutineBase::try_set))(VTID::IN5, f1);
 					ret.success &= !(interp_rt.*(&RoutineBase::try_set))(VTID::IN6, f2);
 				} else {
-					Logger::Log(Logger::LL::Error) << "Could not find routine with subId " << DEF_SUB::INTERP_LIN + m << "in templates." << std::endl;
+					Logger::Log(Logger::LL::Error) << "Could not find routine with subId " << DEF_SUB::INTERP_LINEAR + m << "in templates.";
 					ret.success = false;
 				}
 				break;
@@ -361,7 +378,7 @@ namespace ZDrive::VM {
 			case INS::CALL: {
 				auto rt_optref = vm.CloneAndActivateTemplate(args.at(0));
 				if (!rt_optref) {
-					Logger::Log(Logger::LL::Error) << "Could not find routine with subId " << args.at(0).u << "in templates." << std::endl;
+					Logger::Log(Logger::LL::Error) << "Could not find routine with subId " << args.at(0).u << "in templates.";
 					ret.success = false;
 				}
 				break;
@@ -369,15 +386,28 @@ namespace ZDrive::VM {
 			case INS::YEILD: ret.shouldReturn = true; break;
 			case INS::PRINT: {
 				Logger::LogLevel level = static_cast<Logger::LogLevel>(args.at(0).s);
-				Logger::Log(level) << toStringShortened() << " " << args.at(2).toString(args.at(1)) << std::endl;
+				Logger::Log(level) << toStringShortened() << " " << args.at(2).toString(args.at(1));
 				break;
 			}
 			case INS::SET_PTR: try_set(args.at(0), ValPtr(instanceId, args.at(1))); break;
+			case INS::ASSERT_PTR: {
+				ValPtr test = args.at(0);
+				u32 resultId = args.at(1);
+				auto rt_optref = vm.GetRoutineByInstance(test.b, *this);
+				if (!rt_optref) {
+					ret.success = !try_set(resultId, 1);
+				} else {
+					Routine& rt = rt_optref.value();
+					bool target_has = (rt.*(&RoutineBase::vt)).contains(test.v);
+					ret.success = !try_set(resultId, target_has ? 0 : 2);
+				}
+				break;
+			}
 			case INS::SET_PRIORITY: vm.UpdatePriority(instanceId, args.at(0)); break;
 			}
 		} catch (std::out_of_range oor) {
-			Logger::Log(Logger::LL::Error) << "Fatal error on {instance: " << instanceId << ", sub: " << subId << ", type: " << GetTypeID() << "}:" << std::endl;
-			Logger::Log(Logger::LL::Error) << "Not enough arguments for opcode " << opcode << ": only " << args.size() << " arguments found." << std::endl;
+			Logger::Log(Logger::LL::Error) << "Fatal error on {instance: " << instanceId << ", sub: " << subId << ", type: " << GetTypeID() << "}:";
+			Logger::Log(Logger::LL::Error) << "Not enough arguments for opcode " << opcode << ": only " << args.size() << " arguments found.";
 			ret.success = false;
 			ret.shouldReturn = true;
 			ret.deleteMe = true;

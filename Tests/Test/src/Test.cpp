@@ -87,8 +87,11 @@ static void runFile(std::string path) {
 	if (auto diff = vm.GetVarRef(ZDrive::VTID::DIFF); diff) diff.value().get().s = 1;
 	if (auto rank = vm.GetVarRef(ZDrive::VTID::RANK); rank) rank.value().get().s = 1;
 
+#if 0
 	vm.DebugDisassemble();
+#endif
 
+#if 1
 	LARGE_INTEGER pcf;
 	QueryPerformanceFrequency(&pcf);
 	i64 target = pcf.QuadPart / 60;
@@ -106,5 +109,5 @@ static void runFile(std::string path) {
 			pcLastUpdate.QuadPart = pc.QuadPart;
 		}
 	}
-
+#endif
 }

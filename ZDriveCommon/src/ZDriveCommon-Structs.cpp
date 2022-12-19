@@ -39,7 +39,6 @@ namespace ZDrive {
 		auto& out = Logger::Log(Logger::LL::Debug) << std::format("{:06d}   {:05d}   {:2d}   {:2d}   {:<12d}   ", offset, header.time, header.diff_mask, header.rank_mask, header.ins);
 		for (Arg const& arg : args)
 			out << std::format("{:12.12s} ", arg.toString());
-		out << std::endl;
 	}
 #endif // _DEBUG
 

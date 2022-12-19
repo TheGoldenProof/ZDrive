@@ -49,7 +49,7 @@ namespace ZDrive {
 		std::ostream& _Log(LogLevel _level) {
 			if (!initialized) _Initialize(level, os);
 			if (_level < level) return TGLib::nullout;
-			//os << std::endl;
+			os << std::endl;
 			return os << "[" << getPrefixString(LTF::DEFAULT, _level) << "] ";
 		}
 
