@@ -346,7 +346,7 @@ namespace ZDrive::VM {
 				}
 				break;
 			}
-			case INS::NORMRAD: ret.success = !self_unary_op(args.at(0), [](Value a) { return remainderf(a, static_cast<f32>(M_PI*2)) - static_cast<f32>(M_PI); }); break;
+			case INS::NORMRAD: ret.success = !self_unary_op(args.at(0), [](Value a) { return remainderf(a, static_cast<f32>(M_PI*2)); }); break;
 			case INS::MATHCIRCLEPOS: {
 				u32 idX = args.at(0);
 				u32 idY = args.at(1);

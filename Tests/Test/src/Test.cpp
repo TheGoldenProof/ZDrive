@@ -24,11 +24,15 @@ int main(int argc, const char* argv[]) {
 
 	if (argc >= 5 && !args[1].compare("compile")) {
 		compileToFile(std::vector<std::string>(&argv[3], &argv[argc - 1]), args[argc - 1], args[2]);
+	} else if (argc >= 5 && !args[1].compare("compileAndRun")) {
+		compileToFile(std::vector<std::string>(&argv[3], &argv[argc - 1]), args[argc - 1], args[2]);
+		runFile(args[argc - 1]);
 	} else if (argc == 3 && !args[1].compare("run")) {
 		runFile(args[2]);
 	} else {
 		std::cerr << "Usage: run <inputPath>" << std::endl;
 		std::cerr << "Usage: compile <entry func name> <input path 1> [...] [input path n] <output path>" << std::endl;
+		std::cerr << "Usage: compileAndRun <entry func name> <input path 1> [...] [input path n] <output path>" << std::endl;
 		exit(64);
 	}
 
@@ -70,6 +74,8 @@ static void compileToFile(std::vector<std::string> inPaths, std::string outPath,
 	if (result.size() == 0) { 
 		ZDrive::Logger::Log(ZDrive::Logger::LL::Fatal) << "result.size() = 0. Compilation failed.";
 		exit(65); return; 
+	} else {
+		ZDrive::Logger::Log(ZDrive::Logger::LL::Info) << "Compiled sucessfully.";
 	}
 
 	std::fstream outputFile = std::fstream(outPath, std::ios::out | std::ios::binary);

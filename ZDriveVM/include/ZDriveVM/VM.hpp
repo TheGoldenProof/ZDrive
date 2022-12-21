@@ -48,5 +48,8 @@ namespace ZDrive::VM {
 
 		std::vector<std::unique_ptr<Routine>> templates;
 		std::set<std::unique_ptr<Routine>, Routine::Compare> active;
+		std::vector<Routine*> toBeResorted;
+
+		void ResortActive();
 	};
 }

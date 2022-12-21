@@ -76,6 +76,10 @@ namespace ZDrive::VM {
 			}
 		}
 
+		if (toBeResorted.size()) {
+			ResortActive();
+		}
+
 		vt[VTID::TIME].val.u++;
 		return ret;
 	}
@@ -148,16 +152,10 @@ namespace ZDrive::VM {
 
 	void ZVM::UpdatePriority(u32 instanceId, i32 newPriority) {
 		if (instanceId == 0) return;
-		// This is kinda scuffed i think but it should work.
-		// It modifies a container while iterating through it, which is usually a big no-no,
-		// especially since extract() resorts the whole set, it almost guarantees that the iterators are invalid.
-		// The reason I do it anyway is because I don't use the iterators anymore, 
-		// and extract() returns an owned copy of the extracted item, so it doesn't rely on an invalidated reference.
 		for (std::unique_ptr<Routine> const& rt_uptr : active) {
 			if (rt_uptr->GetInstanceID() == instanceId) {
-				auto node = active.extract(rt_uptr);
-				node.value()->SetPriority(newPriority);
-				active.insert(std::move(node));
+				rt_uptr->SetPriority(newPriority);
+				toBeResorted.push_back(rt_uptr.get());
 				return;
 			}
 		}
@@ -183,5 +181,17 @@ namespace ZDrive::VM {
 	}
 #endif // _DEBUG
 
+	void ZVM::ResortActive() {
+		for (auto const& ptr : toBeResorted) {
+			for (auto&& rt_uptr_iter = active.begin(); rt_uptr_iter != active.end(); rt_uptr_iter++) {
+				if ((*rt_uptr_iter)->GetInstanceID() == ptr->GetInstanceID()) {
+					std::unique_ptr<Routine> rt_uptr = std::move(active.extract(rt_uptr_iter).value());
+					active.insert(std::move(rt_uptr));
+					break;
+				}
+			}
+		}
+		toBeResorted.clear();
+	}
 
 }

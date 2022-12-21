@@ -44,7 +44,7 @@ namespace ZDrive::VM {
 		inline u32 GetInstanceID() const { return instanceId; }
 		inline i32 GetPriority() const { return priority; }
 		// Do not call this. This is for internal use only by ZVM::UpdatePriority. Use that to change the priority instead.
-		inline void SetPriority(i32 newPriority) { newPriority = priority; }
+		inline void SetPriority(i32 newPriority) { priority = newPriority; }
 
 		std::optional<ProcessedInstruction> ProcessInstruction(Instruction const& ins);
 		std::optional<Value> ResolveArg(Arg const& arg);
